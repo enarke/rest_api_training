@@ -5,13 +5,30 @@ app = Flask(__name__)
 
 api = Api(app)
 
+items = []
 
-class Student(Resource):
+class Item(Resource):
     def get(self, name):
-        return{'Student': name}
+        for item in items:
+            if item['name'] == name:
+                return{'Item': item}
+        return {'Item':None}, 404
     
-api.add_resource(Student,'/student/<string:name>')
+    def post(self, name):
+        item = {
+            'name': name,
+            'price': 12.00
+        }
+        items.append(item)
+        return item, 201
+
+class ItemList(Resource):
+    def get(self):
+        return {'items':items}        
+    
+api.add_resource(Item, '/item/<string:name>')
+api.add_resource(ItemList, '/items')
 
 
-app.run(port = 5000)
+app.run(port = 5000, debug = True)
 
